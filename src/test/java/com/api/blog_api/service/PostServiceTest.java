@@ -82,7 +82,7 @@ class PostServiceTest {
                 .thenReturn(response);
 
         List<PostResponseDto> resultado =
-                postService.listarTodos();
+                postService.findAll();
 
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
@@ -102,7 +102,7 @@ class PostServiceTest {
                 .thenReturn(response);
 
         PostResponseDto resultado =
-                postService.obterPorId(id);
+                postService.findById(id);
 
         assertNotNull(resultado);
         assertEquals(id, resultado.id());
@@ -122,7 +122,7 @@ class PostServiceTest {
         RuntimeException exception =
                 assertThrows(
                         RuntimeException.class,
-                        () -> postService.obterPorId(id)
+                        () -> postService.findById(id)
                 );
 
         assertEquals(
@@ -131,7 +131,9 @@ class PostServiceTest {
         );
 
         verify(postRepository).findById(id);
-        verify(postMapper, never()).toResponse(any());
+
+        verify(postMapper, never())
+                .toResponse(any());
     }
 
     @Test
@@ -147,7 +149,7 @@ class PostServiceTest {
                 .thenReturn(response);
 
         PostResponseDto resultado =
-                postService.incluir(request);
+                postService.createPost(request);
 
         assertNotNull(resultado);
         assertEquals(id, resultado.id());
@@ -172,7 +174,7 @@ class PostServiceTest {
                 .thenReturn(response);
 
         PostResponseDto resultado =
-                postService.atualizar(id, request);
+                postService.updatePost(id, request);
 
         assertNotNull(resultado);
         assertEquals(id, resultado.id());
@@ -196,7 +198,7 @@ class PostServiceTest {
         RuntimeException exception =
                 assertThrows(
                         RuntimeException.class,
-                        () -> postService.atualizar(id, request)
+                        () -> postService.updatePost(id, request)
                 );
 
         assertEquals(
@@ -205,7 +207,9 @@ class PostServiceTest {
         );
 
         verify(postRepository).findById(id);
-        verify(postRepository, never()).save(any());
+
+        verify(postRepository, never())
+                .save(any());
     }
 
     @Test
@@ -214,7 +218,7 @@ class PostServiceTest {
         when(postRepository.findById(id))
                 .thenReturn(Optional.of(post));
 
-        postService.deletar(id);
+        postService.deletePost(id);
 
         verify(postRepository).findById(id);
         verify(postRepository).delete(post);
@@ -229,7 +233,7 @@ class PostServiceTest {
         RuntimeException exception =
                 assertThrows(
                         RuntimeException.class,
-                        () -> postService.deletar(id)
+                        () -> postService.deletePost(id)
                 );
 
         assertEquals(
@@ -238,6 +242,8 @@ class PostServiceTest {
         );
 
         verify(postRepository).findById(id);
-        verify(postRepository, never()).delete(any());
+
+        verify(postRepository, never())
+                .delete(any());
     }
 }
