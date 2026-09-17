@@ -20,8 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.api.blog_api.dto.request.PostRequest;
-import com.api.blog_api.dto.response.PostResponse;
+import com.api.blog_api.dto.request.PostRequestDto;
+import com.api.blog_api.dto.response.PostResponseDto;
 import com.api.blog_api.mapper.PostMapper;
 import com.api.blog_api.model.PostModel;
 import com.api.blog_api.repository.PostRepository;
@@ -36,12 +36,12 @@ class PostServiceTest {
     private PostMapper postMapper;
 
     @InjectMocks
-    private PostService postService;
+    private PostServiceImpl postService;
 
     private UUID id;
     private PostModel post;
-    private PostRequest request;
-    private PostResponse response;
+    private PostRequestDto request;
+    private PostResponseDto response;
 
     @BeforeEach
     void setUp() {
@@ -56,14 +56,14 @@ class PostServiceTest {
                 "Conteúdo sobre desenvolvimento de APIs REST."
         );
 
-        request = new PostRequest(
+        request = new PostRequestDto(
                 "Loester Botelho",
                 LocalDate.of(2026, 9, 16),
                 "Aprendendo Spring Boot",
                 "Conteúdo sobre desenvolvimento de APIs REST."
         );
 
-        response = new PostResponse(
+        response = new PostResponseDto(
                 id,
                 "Loester Botelho",
                 LocalDate.of(2026, 9, 16),
@@ -81,7 +81,7 @@ class PostServiceTest {
         when(postMapper.toResponse(post))
                 .thenReturn(response);
 
-        List<PostResponse> resultado =
+        List<PostResponseDto> resultado =
                 postService.listarTodos();
 
         assertNotNull(resultado);
@@ -101,7 +101,7 @@ class PostServiceTest {
         when(postMapper.toResponse(post))
                 .thenReturn(response);
 
-        PostResponse resultado =
+        PostResponseDto resultado =
                 postService.obterPorId(id);
 
         assertNotNull(resultado);
@@ -146,7 +146,7 @@ class PostServiceTest {
         when(postMapper.toResponse(post))
                 .thenReturn(response);
 
-        PostResponse resultado =
+        PostResponseDto resultado =
                 postService.incluir(request);
 
         assertNotNull(resultado);
@@ -171,7 +171,7 @@ class PostServiceTest {
         when(postMapper.toResponse(post))
                 .thenReturn(response);
 
-        PostResponse resultado =
+        PostResponseDto resultado =
                 postService.atualizar(id, request);
 
         assertNotNull(resultado);

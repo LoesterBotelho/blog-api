@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
-public record PostRequest(
+public record PostRequestDto(
 
         @NotBlank(message = "Autor é obrigatório")
         @Size(

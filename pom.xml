@@ -52,6 +52,16 @@
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
 
+		<!-- ================================================== -->
+		<!-- JSON -->
+		<!-- Jackson 3 - padrão/preferencial no Boot 4 -->
+		<!-- ================================================== -->
+		
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-json</artifactId>
+		</dependency>
+		
         <!-- ================================================== -->
         <!-- Spring Data JPA                                    -->
         <!-- ================================================== -->

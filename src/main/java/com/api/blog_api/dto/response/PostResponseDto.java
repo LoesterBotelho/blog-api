@@ -3,7 +3,7 @@ package com.api.blog_api.dto.response;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record PostResponse(
+public record PostResponseDto(
         UUID id,
         String autor,
         LocalDate data,

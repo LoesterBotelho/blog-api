@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.blog_api.dto.request.PostRequest;
-import com.api.blog_api.dto.response.PostResponse;
-import com.api.blog_api.service.PostService;
+import com.api.blog_api.dto.request.PostRequestDto;
+import com.api.blog_api.dto.response.PostResponseDto;
+import com.api.blog_api.service.PostServiceImpl;
 
 import jakarta.validation.Valid;
 
@@ -25,35 +25,35 @@ import jakarta.validation.Valid;
 @RequestMapping("/posts")
 public class PostController {
 
-    private final PostService postService;
+    private final PostServiceImpl postService;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostServiceImpl postService) {
         this.postService = postService;
     }
 
     @GetMapping
-    public List<PostResponse> listarTodos() {
+    public List<PostResponseDto> listarTodos() {
         return postService.listarTodos();
     }
 
     @GetMapping("/{id}")
-    public PostResponse obterPorId(@PathVariable UUID id) {
+    public PostResponseDto obterPorId(@PathVariable UUID id) {
         return postService.obterPorId(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostResponse incluir(
-            @Valid @RequestBody PostRequest request) {
+    public PostResponseDto incluir(
+            @Valid @RequestBody PostRequestDto request) {
 
         return postService.incluir(request);
     }
 
     @PutMapping("/{id}")
-    public PostResponse atualizar(
+    public PostResponseDto atualizar(
             @PathVariable UUID id,
-            @Valid @RequestBody PostRequest request) {
+            @Valid @RequestBody PostRequestDto request) {
 
         return postService.atualizar(id, request);
     }
