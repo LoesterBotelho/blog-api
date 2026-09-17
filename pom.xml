@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.1.1</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.api</groupId>
+	<artifactId>blog-api</artifactId>
+	<version>1.0.0</version>
+	<name>blog-api</name>
+	<description>API para Blog</description>
+
+    <!-- ====================================================== -->
+    <!-- Propriedades                                            -->
+    <!-- ====================================================== -->
+
+    <properties>
+
+        <!-- Java -->
+        <java.version>25</java.version>
+
+        <!-- MapStruct -->
+        <mapstruct.version>1.6.3</mapstruct.version>
+
+        <!-- JUnit 6 -->
+        <junit.version>6.0.1</junit.version>
+
+        <!-- Mockito -->
+        <mockito.version>5.20.0</mockito.version>
+
+        <!-- Eclipse / Annotation Processing -->
+        <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+
+    </properties>
+
+    <!-- ====================================================== -->
+    <!-- Dependências                                            -->
+    <!-- ====================================================== -->
+
+    <dependencies>
+
+        <!-- ================================================== -->
+        <!-- Spring Web MVC                                     -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Spring Data JPA                                    -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Jakarta Bean Validation                            -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Swagger / OpenAPI                                  -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- MapStruct                                           -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Banco de Dados - MariaDB                            -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- DevTools                                            -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Testes Web MVC                                      -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Testes JPA                                          -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Testes Validation                                   -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- JUnit 6                                              -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Mockito                                              -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ================================================== -->
+        <!-- Mockito + JUnit Jupiter                              -->
+        <!-- ================================================== -->
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ====================================================== -->
+    <!-- Build                                                   -->
+    <!-- ====================================================== -->
+
+    <build>
+
+        <plugins>
+
+            <!-- ================================================== -->
+            <!-- Maven Compiler                                     -->
+            <!-- ================================================== -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+
+                <configuration>
+
+                    <!-- Java 25 -->
+                    <release>25</release>
+
+                    <!-- ========================================== -->
+                    <!-- Parâmetros dos métodos                     -->
+                    <!-- Necessário para algumas integrações        -->
+                    <!-- ========================================== -->
+
+                    <parameters>true</parameters>
+
+                    <!-- ========================================== -->
+                    <!-- Annotation Processors                       -->
+                    <!-- ========================================== -->
+
+                    <annotationProcessorPaths>
+
+                        <!-- MapStruct Processor -->
+
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+
+                    </annotationProcessorPaths>
+
+                </configuration>
+
+            </plugin>
+
+            <!-- ================================================== -->
+            <!-- Spring Boot Maven Plugin                           -->
+            <!-- ================================================== -->
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>
