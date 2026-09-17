@@ -1,6 +1,7 @@
 package com.api.blog_api.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,48 +24,24 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.api.blog_api.dto.request.PostRequestDto;
 import com.api.blog_api.dto.response.PostResponseDto;
-import com.api.blog_api.service.PostServiceImpl;
+import com.api.blog_api.service.PostService;
 
 @WebMvcTest(PostController.class)
 class PostControllerTest {
 
-    // ==========================================================
-    // MOCK MVC
-    // ==========================================================
-
     @Autowired
     private MockMvc mockMvc;
 
-    // ==========================================================
-    // MOCK DO SERVICE
-    // ==========================================================
-
     @MockitoBean
-    private PostServiceImpl postService;
-
-    // ==========================================================
-    // DADOS DOS TESTES
-    // ==========================================================
+    private PostService postService;
 
     private UUID id;
-
     private PostResponseDto response;
-
-    // ==========================================================
-    // CONFIGURAÇÃO INICIAL
-    // ==========================================================
 
     @BeforeEach
     void setUp() {
 
         id = UUID.randomUUID();
-
-        new PostRequestDto(
-                "Loester Botelho",
-                LocalDate.of(2026, 9, 16),
-                "Aprendendo Spring Boot",
-                "Conteúdo sobre desenvolvimento de APIs REST."
-        );
 
         response = new PostResponseDto(
                 id,
@@ -75,14 +52,10 @@ class PostControllerTest {
         );
     }
 
-    // ==========================================================
-    // GET /posts
-    // ==========================================================
-
     @Test
     void deveListarTodosOsPosts() throws Exception {
 
-        when(postService.listarTodos())
+        when(postService.findAll())
                 .thenReturn(List.of(response));
 
         mockMvc.perform(
@@ -101,14 +74,10 @@ class PostControllerTest {
                         .value("Conteúdo sobre desenvolvimento de APIs REST."));
     }
 
-    // ==========================================================
-    // GET /posts/{id}
-    // ==========================================================
-
     @Test
     void deveObterPostPorId() throws Exception {
 
-        when(postService.obterPorId(id))
+        when(postService.findById(id))
                 .thenReturn(response);
 
         mockMvc.perform(
@@ -127,14 +96,10 @@ class PostControllerTest {
                         .value("Conteúdo sobre desenvolvimento de APIs REST."));
     }
 
-    // ==========================================================
-    // POST /posts
-    // ==========================================================
-
     @Test
     void deveIncluirPost() throws Exception {
 
-        when(postService.incluir(any(PostRequestDto.class)))
+        when(postService.createPost(any(PostRequestDto.class)))
                 .thenReturn(response);
 
         mockMvc.perform(
@@ -162,14 +127,10 @@ class PostControllerTest {
                         .value("Conteúdo sobre desenvolvimento de APIs REST."));
     }
 
-    // ==========================================================
-    // PUT /posts/{id}
-    // ==========================================================
-
     @Test
     void deveAtualizarPost() throws Exception {
 
-        when(postService.atualizar(
+        when(postService.updatePost(
                 any(UUID.class),
                 any(PostRequestDto.class)
         ))
@@ -200,22 +161,18 @@ class PostControllerTest {
                         .value("Conteúdo sobre desenvolvimento de APIs REST."));
     }
 
-    // ==========================================================
-    // DELETE /posts/{id}
-    // ==========================================================
-
     @Test
     void deveDeletarPost() throws Exception {
+
+        doNothing()
+                .when(postService)
+                .deletePost(id);
 
         mockMvc.perform(
                 delete("/posts/{id}", id)
         )
                 .andExpect(status().isNoContent());
     }
-
-    // ==========================================================
-    // VALIDAÇÃO - AUTOR VAZIO
-    // ==========================================================
 
     @Test
     void deveRetornarBadRequestQuandoAutorEstiverVazio()
@@ -236,10 +193,6 @@ class PostControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ==========================================================
-    // VALIDAÇÃO - AUTOR MUITO CURTO
-    // ==========================================================
-
     @Test
     void deveRetornarBadRequestQuandoAutorForMuitoCurto()
             throws Exception {
@@ -258,10 +211,6 @@ class PostControllerTest {
         )
                 .andExpect(status().isBadRequest());
     }
-
-    // ==========================================================
-    // VALIDAÇÃO - TÍTULO VAZIO
-    // ==========================================================
 
     @Test
     void deveRetornarBadRequestQuandoTituloEstiverVazio()
@@ -282,10 +231,6 @@ class PostControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ==========================================================
-    // VALIDAÇÃO - TÍTULO MUITO CURTO
-    // ==========================================================
-
     @Test
     void deveRetornarBadRequestQuandoTituloForMuitoCurto()
             throws Exception {
@@ -304,10 +249,6 @@ class PostControllerTest {
         )
                 .andExpect(status().isBadRequest());
     }
-
-    // ==========================================================
-    // VALIDAÇÃO - DATA NULA
-    // ==========================================================
 
     @Test
     void deveRetornarBadRequestQuandoDataForNula()
@@ -328,10 +269,6 @@ class PostControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ==========================================================
-    // VALIDAÇÃO - DATA FUTURA
-    // ==========================================================
-
     @Test
     void deveRetornarBadRequestQuandoDataForFutura()
             throws Exception {
@@ -351,10 +288,6 @@ class PostControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // ==========================================================
-    // VALIDAÇÃO - TEXTO VAZIO
-    // ==========================================================
-
     @Test
     void deveRetornarBadRequestQuandoTextoEstiverVazio()
             throws Exception {
@@ -373,10 +306,6 @@ class PostControllerTest {
         )
                 .andExpect(status().isBadRequest());
     }
-
-    // ==========================================================
-    // VALIDAÇÃO - TEXTO MUITO CURTO
-    // ==========================================================
 
     @Test
     void deveRetornarBadRequestQuandoTextoForMuitoCurto()

@@ -3,7 +3,6 @@ package com.api.blog_api.controller;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.blog_api.dto.request.PostRequestDto;
 import com.api.blog_api.dto.response.PostResponseDto;
-import com.api.blog_api.service.PostServiceImpl;
+import com.api.blog_api.service.PostService;
 
 import jakarta.validation.Valid;
 
@@ -25,42 +24,42 @@ import jakarta.validation.Valid;
 @RequestMapping("/posts")
 public class PostController {
 
-    private final PostServiceImpl postService;
+    private final PostService postService;
 
-    @Autowired
-    public PostController(PostServiceImpl postService) {
+    public PostController(PostService postService) {
         this.postService = postService;
     }
 
     @GetMapping
-    public List<PostResponseDto> listarTodos() {
-        return postService.listarTodos();
+    public List<PostResponseDto> findAll() {
+        return postService.findAll();
     }
 
     @GetMapping("/{id}")
-    public PostResponseDto obterPorId(@PathVariable UUID id) {
-        return postService.obterPorId(id);
+    public PostResponseDto findById(@PathVariable UUID id) {
+        return postService.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostResponseDto incluir(
-            @Valid @RequestBody PostRequestDto request) {
+    public PostResponseDto createPost(
+            @Valid @RequestBody PostRequestDto dto) {
 
-        return postService.incluir(request);
+        return postService.createPost(dto);
     }
 
     @PutMapping("/{id}")
-    public PostResponseDto atualizar(
+    public PostResponseDto updatePost(
             @PathVariable UUID id,
-            @Valid @RequestBody PostRequestDto request) {
+            @Valid @RequestBody PostRequestDto dto) {
 
-        return postService.atualizar(id, request);
+        return postService.updatePost(id, dto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletar(@PathVariable UUID id) {
-        postService.deletar(id);
+    public void deletePost(@PathVariable UUID id) {
+
+        postService.deletePost(id);
     }
 }

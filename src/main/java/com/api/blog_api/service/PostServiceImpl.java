@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.api.blog_api.dto.request.PostRequestDto;
 import com.api.blog_api.dto.response.PostResponseDto;
@@ -13,7 +14,8 @@ import com.api.blog_api.model.PostModel;
 import com.api.blog_api.repository.PostRepository;
 
 @Service
-public class PostServiceImpl {
+@Transactional
+public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final PostMapper postMapper;
@@ -27,7 +29,19 @@ public class PostServiceImpl {
         this.postMapper = postMapper;
     }
 
-    public List<PostResponseDto> listarTodos() {
+    @Override
+    public PostResponseDto createPost(PostRequestDto dto) {
+
+        PostModel post = postMapper.toModel(dto);
+
+        PostModel postSalvo = postRepository.save(post);
+
+        return postMapper.toResponse(postSalvo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findAll() {
 
         return postRepository.findAll()
                 .stream()
@@ -35,51 +49,47 @@ public class PostServiceImpl {
                 .toList();
     }
 
-    public PostResponseDto obterPorId(UUID id) {
+    @Override
+    @Transactional(readOnly = true)
+    public PostResponseDto findById(UUID id) {
 
-        PostModel post = postRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Post não encontrado. Id: " + id));
-
-        return postMapper.toResponse(post);
-    }
-
-    public PostResponseDto incluir(PostRequestDto request) {
-
-        PostModel post = postMapper.toModel(request);
-
-        post = postRepository.save(post);
+        PostModel post = buscarPostPorId(id);
 
         return postMapper.toResponse(post);
     }
 
-    public PostResponseDto atualizar(
+    @Override
+    public PostResponseDto updatePost(
             UUID id,
-            PostRequestDto request) {
+            PostRequestDto dto) {
 
-        PostModel post = postRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Post não encontrado. Id: " + id));
+        PostModel post = buscarPostPorId(id);
 
-        post.setAutor(request.autor());
-        post.setData(request.data());
-        post.setTitulo(request.titulo());
-        post.setTexto(request.texto());
+        post.setAutor(dto.autor());
+        post.setData(dto.data());
+        post.setTitulo(dto.titulo());
+        post.setTexto(dto.texto());
 
-        post = postRepository.save(post);
+        PostModel postAtualizado = postRepository.save(post);
 
-        return postMapper.toResponse(post);
+        return postMapper.toResponse(postAtualizado);
     }
 
-    public void deletar(UUID id) {
+    @Override
+    public void deletePost(UUID id) {
 
-        PostModel post = postRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Post não encontrado. Id: " + id));
+        PostModel post = buscarPostPorId(id);
 
         postRepository.delete(post);
+    }
+
+    private PostModel buscarPostPorId(UUID id) {
+
+        return postRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Post não encontrado. Id: " + id
+                        )
+                );
     }
 }
