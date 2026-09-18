@@ -1,6 +1,7 @@
 package com.api.blog_api.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.api.blog_api.dto.request.PostRequestDto;
 import com.api.blog_api.dto.response.PostResponseDto;
+import com.api.blog_api.exception.RegistroNaoEncontradoException;
 import com.api.blog_api.mapper.PostMapper;
 import com.api.blog_api.model.PostModel;
 import com.api.blog_api.repository.PostRepository;
@@ -18,6 +20,7 @@ import com.api.blog_api.repository.PostRepository;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+
     private final PostMapper postMapper;
 
     @Autowired
@@ -30,6 +33,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public PostResponseDto createPost(PostRequestDto dto) {
 
         PostModel post = postMapper.toModel(dto);
@@ -53,12 +57,23 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public PostResponseDto findById(UUID id) {
 
-        PostModel post = buscarPostPorId(id);
+        Optional<PostModel> optionalPost =
+                postRepository.findById(id);
 
-        return postMapper.toResponse(post);
+        if (optionalPost.isEmpty()) {
+
+            throw new RegistroNaoEncontradoException(
+                    "Post não encontrado com o ID: " + id
+            );
+        }
+
+        return postMapper.toResponse(
+                optionalPost.get()
+        );
     }
 
     @Override
+    @Transactional
     public PostResponseDto updatePost(
             UUID id,
             PostRequestDto dto) {
@@ -76,6 +91,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public void deletePost(UUID id) {
 
         PostModel post = buscarPostPorId(id);
@@ -83,12 +99,13 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
+    @Transactional(readOnly = true)
     private PostModel buscarPostPorId(UUID id) {
 
         return postRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException(
-                                "Post não encontrado. Id: " + id
+                        new RegistroNaoEncontradoException(
+                                "Post não encontrado com o ID: " + id
                         )
                 );
     }

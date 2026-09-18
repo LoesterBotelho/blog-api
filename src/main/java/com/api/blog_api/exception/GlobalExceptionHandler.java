@@ -13,9 +13,9 @@ import com.api.blog_api.dto.response.ErroResponseDto;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ============================================================
+    // -----------------------------------------------------------------------------------------------------
     // REGISTRO NÃO ENCONTRADO - 404
-    // ============================================================
+    // -----------------------------------------------------------------------------------------------------
 
     @ExceptionHandler(RegistroNaoEncontradoException.class)
     public ResponseEntity<ErroResponseDto> tratarRegistroNaoEncontrado(
@@ -33,9 +33,9 @@ public class GlobalExceptionHandler {
                 .body(erro);
     }
 
-    // ============================================================
+    // -----------------------------------------------------------------------------------------------------
     // ERRO DE VALIDAÇÃO - 400
-    // ============================================================
+    // -----------------------------------------------------------------------------------------------------
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErroResponseDto> tratarErroValidacao(
