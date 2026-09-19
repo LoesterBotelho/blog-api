@@ -13,7 +13,7 @@
     },
     {
       "key": "postId",
-      "value": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+      "value": "",
       "type": "string"
     }
   ],
@@ -48,7 +48,39 @@
       ]
     },
     {
-      "name": "02 - GET - Buscar post por ID",
+      "name": "02 - POST - Criar post válido",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"autor\": \"Loester Botelho\",\n  \"data\": \"2026-09-16\",\n  \"titulo\": \"Aprendendo Spring Boot\",\n  \"texto\": \"Conteúdo sobre desenvolvimento de APIs REST com Spring Boot.\"\n}"
+        },
+        "url": "{{baseUrl}}/posts"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code é 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"Retorna PostResponseDto com ID gerado\", function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.have.property(\"id\");",
+              "    pm.expect(json.autor).to.eql(\"Loester Botelho\");",
+              "    pm.collectionVariables.set(\"postId\", json.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - GET - Buscar post por ID",
       "request": {
         "method": "GET",
         "header": [],
@@ -78,7 +110,7 @@
       ]
     },
     {
-      "name": "03 - GET - Post inexistente (404 Not Found)",
+      "name": "04 - GET - Post inexistente (404 Not Found)",
       "request": {
         "method": "GET",
         "header": [],
@@ -100,38 +132,6 @@
               "    pm.expect(json.erro).to.eql(\"Not Found\");",
               "    pm.expect(json).to.have.property(\"mensagem\");",
               "    pm.expect(json).to.have.property(\"dataHora\");",
-              "});"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "04 - POST - Criar post válido",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"autor\": \"Loester Botelho\",\n  \"data\": \"2026-09-16\",\n  \"titulo\": \"Aprendendo Spring Boot\",\n  \"texto\": \"Conteúdo sobre desenvolvimento de APIs REST com Spring Boot.\"\n}"
-        },
-        "url": "{{baseUrl}}/posts"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Status code é 201\", function () {",
-              "    pm.response.to.have.status(201);",
-              "});",
-              "",
-              "pm.test(\"Retorna PostResponseDto com ID gerado\", function () {",
-              "    const json = pm.response.json();",
-              "    pm.expect(json).to.have.property(\"id\");",
-              "    pm.expect(json.autor).to.eql(\"Loester Botelho\");",
-              "    pm.collectionVariables.set(\"postId\", json.id);",
               "});"
             ]
           }
