@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.api.blog_api.dto.request.PostRequestDto;
 import com.api.blog_api.dto.response.PostResponseDto;
+import com.api.blog_api.exception.RegistroNaoEncontradoException;
 import com.api.blog_api.mapper.PostMapper;
 import com.api.blog_api.model.PostModel;
 import com.api.blog_api.repository.PostRepository;
@@ -45,7 +46,6 @@ class PostServiceTest {
 
     @BeforeEach
     void setUp() {
-
         id = UUID.randomUUID();
 
         post = new PostModel(
@@ -74,15 +74,10 @@ class PostServiceTest {
 
     @Test
     void deveListarTodosOsPosts() {
+        when(postRepository.findAll()).thenReturn(List.of(post));
+        when(postMapper.toResponse(post)).thenReturn(response);
 
-        when(postRepository.findAll())
-                .thenReturn(List.of(post));
-
-        when(postMapper.toResponse(post))
-                .thenReturn(response);
-
-        List<PostResponseDto> resultado =
-                postService.findAll();
+        List<PostResponseDto> resultado = postService.findAll();
 
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
@@ -94,15 +89,10 @@ class PostServiceTest {
 
     @Test
     void deveObterPostPorId() {
+        when(postRepository.findById(id)).thenReturn(Optional.of(post));
+        when(postMapper.toResponse(post)).thenReturn(response);
 
-        when(postRepository.findById(id))
-                .thenReturn(Optional.of(post));
-
-        when(postMapper.toResponse(post))
-                .thenReturn(response);
-
-        PostResponseDto resultado =
-                postService.findById(id);
+        PostResponseDto resultado = postService.findById(id);
 
         assertNotNull(resultado);
         assertEquals(id, resultado.id());
@@ -115,41 +105,29 @@ class PostServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoPostNaoForEncontrado() {
+        when(postRepository.findById(id)).thenReturn(Optional.empty());
 
-        when(postRepository.findById(id))
-                .thenReturn(Optional.empty());
-
-        RuntimeException exception =
-                assertThrows(
-                        RuntimeException.class,
-                        () -> postService.findById(id)
-                );
+        RegistroNaoEncontradoException exception = assertThrows(
+                RegistroNaoEncontradoException.class,
+                () -> postService.findById(id)
+        );
 
         assertEquals(
-                "Post não encontrado. Id: " + id,
+                "Post não encontrado com o ID: " + id,
                 exception.getMessage()
         );
 
         verify(postRepository).findById(id);
-
-        verify(postMapper, never())
-                .toResponse(any());
+        verify(postMapper, never()).toResponse(any());
     }
 
     @Test
     void deveIncluirPost() {
+        when(postMapper.toModel(request)).thenReturn(post);
+        when(postRepository.save(post)).thenReturn(post);
+        when(postMapper.toResponse(post)).thenReturn(response);
 
-        when(postMapper.toModel(request))
-                .thenReturn(post);
-
-        when(postRepository.save(post))
-                .thenReturn(post);
-
-        when(postMapper.toResponse(post))
-                .thenReturn(response);
-
-        PostResponseDto resultado =
-                postService.createPost(request);
+        PostResponseDto resultado = postService.createPost(request);
 
         assertNotNull(resultado);
         assertEquals(id, resultado.id());
@@ -163,22 +141,14 @@ class PostServiceTest {
 
     @Test
     void deveAtualizarPost() {
+        when(postRepository.findById(id)).thenReturn(Optional.of(post));
+        when(postRepository.save(post)).thenReturn(post);
+        when(postMapper.toResponse(post)).thenReturn(response);
 
-        when(postRepository.findById(id))
-                .thenReturn(Optional.of(post));
-
-        when(postRepository.save(post))
-                .thenReturn(post);
-
-        when(postMapper.toResponse(post))
-                .thenReturn(response);
-
-        PostResponseDto resultado =
-                postService.updatePost(id, request);
+        PostResponseDto resultado = postService.updatePost(id, request);
 
         assertNotNull(resultado);
         assertEquals(id, resultado.id());
-
         assertEquals(request.autor(), post.getAutor());
         assertEquals(request.data(), post.getData());
         assertEquals(request.titulo(), post.getTitulo());
@@ -191,32 +161,25 @@ class PostServiceTest {
 
     @Test
     void deveLancarExcecaoAoAtualizarPostInexistente() {
+        when(postRepository.findById(id)).thenReturn(Optional.empty());
 
-        when(postRepository.findById(id))
-                .thenReturn(Optional.empty());
-
-        RuntimeException exception =
-                assertThrows(
-                        RuntimeException.class,
-                        () -> postService.updatePost(id, request)
-                );
+        RegistroNaoEncontradoException exception = assertThrows(
+                RegistroNaoEncontradoException.class,
+                () -> postService.updatePost(id, request)
+        );
 
         assertEquals(
-                "Post não encontrado. Id: " + id,
+                "Post não encontrado com o ID: " + id,
                 exception.getMessage()
         );
 
         verify(postRepository).findById(id);
-
-        verify(postRepository, never())
-                .save(any());
+        verify(postRepository, never()).save(any());
     }
 
     @Test
     void deveDeletarPost() {
-
-        when(postRepository.findById(id))
-                .thenReturn(Optional.of(post));
+        when(postRepository.findById(id)).thenReturn(Optional.of(post));
 
         postService.deletePost(id);
 
@@ -226,24 +189,19 @@ class PostServiceTest {
 
     @Test
     void deveLancarExcecaoAoDeletarPostInexistente() {
+        when(postRepository.findById(id)).thenReturn(Optional.empty());
 
-        when(postRepository.findById(id))
-                .thenReturn(Optional.empty());
-
-        RuntimeException exception =
-                assertThrows(
-                        RuntimeException.class,
-                        () -> postService.deletePost(id)
-                );
+        RegistroNaoEncontradoException exception = assertThrows(
+                RegistroNaoEncontradoException.class,
+                () -> postService.deletePost(id)
+        );
 
         assertEquals(
-                "Post não encontrado. Id: " + id,
+                "Post não encontrado com o ID: " + id,
                 exception.getMessage()
         );
 
         verify(postRepository).findById(id);
-
-        verify(postRepository, never())
-                .delete(any());
+        verify(postRepository, never()).delete(any());
     }
 }
