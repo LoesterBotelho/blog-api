@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   mariadb:
     image: mariadb:11.8
     container_name: meu_mariadb
@@ -11,12 +12,33 @@ services:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+    networks:
+      - blog-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
+
+  rsyslog:
+    image: loesterbotelho/rsyslog:1.0.0
+    container_name: rsyslog-server
+    ports:
+      - "514:514/tcp"
+      - "514:514/udp"
+    volumes:
+      - ./logs:/logs
+    networks:
+      - blog-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep rsyslogd > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   api-alunos:
     image: loesterbotelho/blog-api:1.0.0
@@ -27,10 +49,50 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/blogappdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=America/Sao_Paulo
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://host.docker.internal:514"
+        syslog-facility: daemon
+        tag: "blog-api"
+    networks:
+      - blog-network
     depends_on:
       mariadb:
         condition: service_healthy
+      rsyslog:
+        condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  apache:
+    image: loesterbotelho/apache-logs:1.0.0
+    container_name: apache-logs
+    ports:
+      - "8081:80"
+    volumes:
+      - ./logs:/usr/local/apache2/htdocs:ro
+    networks:
+      - blog-network
+    depends_on:
+      rsyslog:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+networks:
+  blog-network:
+    driver: bridge
 
 volumes:
   mariadb_data:
