@@ -6,7 +6,7 @@ RUN apt-get update \
 
 COPY rsyslog.conf /etc/rsyslog.conf
 
-RUN mkdir -p /logs
+RUN mkdir -p /logs && chmod 755 /logs
 
 EXPOSE 514/tcp
 EXPOSE 514/udp
