@@ -1,5 +1,6 @@
 package com.api.blog_api.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,7 +21,6 @@ import com.api.blog_api.repository.PostRepository;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
-
     private final PostMapper postMapper;
 
     @Autowired
@@ -37,6 +37,11 @@ public class PostServiceImpl implements PostService {
     public PostResponseDto createPost(PostRequestDto dto) {
 
         PostModel post = postMapper.toModel(dto);
+
+        // Garante que a data atual seja definida antes de salvar caso o mapper não a preencha
+        if (post.getData() == null) {
+            post.setData(LocalDate.now());
+        }
 
         PostModel postSalvo = postRepository.save(post);
 
@@ -80,10 +85,11 @@ public class PostServiceImpl implements PostService {
 
         PostModel post = buscarPostPorId(id);
 
-        post.setAutor(dto.autor());
-        post.setData(dto.data());
+        post.setAutor(dto.autor());        
         post.setTitulo(dto.titulo());
         post.setTexto(dto.texto());
+
+        // A data de criação original (post.getData()) é mantida inalterada no PUT
 
         PostModel postAtualizado = postRepository.save(post);
 

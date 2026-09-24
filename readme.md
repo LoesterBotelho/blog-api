@@ -618,6 +618,10 @@ docker volume create mariadb_data
 Criar o container:
 
 ```bash
+docker run -d --name meu_mariadb -p 3306:3306 -e MARIADB_ROOT_PASSWORD=root -v mariadb_data:/var/lib/mysql --restart unless-stopped mariadb:11.8
+```
+
+```bash
 docker run -d \
   --name meu_mariadb \
   -p 3306:3306 \
@@ -628,6 +632,11 @@ docker run -d \
 ```
 
 Criar o banco:
+
+
+```bash
+docker exec -it meu_mariadb mariadb -u root -proot -e "CREATE DATABASE IF NOT EXISTS blogappdb;"
+```
 
 ```bash
 docker exec -it meu_mariadb \
@@ -842,3 +851,16 @@ Full-Stack Developer | Java | Spring | Angular | React
 ## Licença
 
 Projeto desenvolvido para fins de estudo, prática e evolução profissional em desenvolvimento de software, APIs REST e ecossistema Java/Spring.
+
+
+```
+newman run collection.json --reporters cli,htmlextra
+```
+
+
+# Executa os testes de integração com o Newman via Maven
+```
+mvn integration-test
+```
+
+

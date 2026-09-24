@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
-public record PostRequestDto(
+public record CommentRequestDto(
 
         @NotBlank(message = "Autor é obrigatório")
         @Size(
@@ -17,24 +17,19 @@ public record PostRequestDto(
         )
         String autor,
 
-        @NotBlank(message = "Título é obrigatório")
-        @Size(
-                min = 3,
-                max = 100,
-                message = "Título deve possuir entre 3 e 100 caracteres"
+        @NotNull(message = "Data é obrigatória")
+        @PastOrPresent(
+                message = "Data não pode ser futura"
         )
-        String titulo,
+        LocalDate data,
 
         @NotBlank(message = "Texto é obrigatório")
         @Size(
-                min = 10,
-                message = "Texto deve possuir no mínimo 10 caracteres"
+                min = 5,
+                max = 1000,
+                message = "Texto deve possuir entre 5 e 1000 caracteres"
         )
-        String texto,
-
-        @NotNull(message = "Data é obrigatória")
-        @PastOrPresent(message = "Data não pode ser futura")
-        LocalDate data
+        String texto
 
 ) {
 }
