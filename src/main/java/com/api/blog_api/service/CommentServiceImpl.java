@@ -116,11 +116,6 @@ public class CommentServiceImpl implements CommentService {
 
         comment.setAutor(dto.autor());
         comment.setTexto(dto.texto());
-        
-        // Mantém a data original do comentário ou atualiza conforme a regra de negócio do seu projeto
-        if (dto.data() != null) {
-            comment.setData(dto.data());
-        }
 
         CommentModel commentAtualizado = commentRepository.save(comment);
 

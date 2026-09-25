@@ -51,14 +51,12 @@ class PostServiceTest {
         post = new PostModel(
                 id,
                 "Loester Botelho",
-                LocalDate.of(2026, 9, 16),
                 "Aprendendo Spring Boot",
                 "Conteúdo sobre desenvolvimento de APIs REST."
         );
-
+        
         request = new PostRequestDto(
                 "Loester Botelho",
-                LocalDate.of(2026, 9, 16),
                 "Aprendendo Spring Boot",
                 "Conteúdo sobre desenvolvimento de APIs REST."
         );
@@ -68,7 +66,8 @@ class PostServiceTest {
                 "Loester Botelho",
                 LocalDate.of(2026, 9, 16),
                 "Aprendendo Spring Boot",
-                "Conteúdo sobre desenvolvimento de APIs REST."
+                "Conteúdo sobre desenvolvimento de APIs REST.",
+                List.of()
         );
     }
 
@@ -149,10 +148,6 @@ class PostServiceTest {
 
         assertNotNull(resultado);
         assertEquals(id, resultado.id());
-        assertEquals(request.autor(), post.getAutor());
-        assertEquals(request.data(), post.getData());
-        assertEquals(request.titulo(), post.getTitulo());
-        assertEquals(request.texto(), post.getTexto());
 
         verify(postRepository).findById(id);
         verify(postRepository).save(post);

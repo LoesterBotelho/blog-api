@@ -1,10 +1,6 @@
 package com.api.blog_api.dto.request;
 
-import java.time.LocalDate;
-
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 public record PostRequestDto(
@@ -30,11 +26,6 @@ public record PostRequestDto(
                 min = 10,
                 message = "Texto deve possuir no mínimo 10 caracteres"
         )
-        String texto,
-
-        @NotNull(message = "Data é obrigatória")
-        @PastOrPresent(message = "Data não pode ser futura")
-        LocalDate data
-
+        String texto
 ) {
 }

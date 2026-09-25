@@ -15,5 +15,6 @@ public interface CommentMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "post", ignore = true)
+    @Mapping(target = "data", ignore = true)
     CommentModel toModel(CommentRequestDto request);
 }

@@ -61,6 +61,14 @@ public class PostModel implements Serializable {
         this.texto = texto;
     }
 
+    public PostModel(UUID id, String autor, LocalDate data, String titulo, String texto) {
+        this.id = id;
+        this.autor = autor;
+        this.data = data != null ? data : LocalDate.now();
+        this.titulo = titulo;
+        this.texto = texto;
+    }
+    
     @PrePersist
     public void prePersist() {
         if (this.data == null) {
@@ -68,6 +76,14 @@ public class PostModel implements Serializable {
         }
     }
 
+    public List<CommentModel> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<CommentModel> comentarios) {
+        this.comentarios = comentarios;
+    }
+    
     public UUID getId() {
         return id;
     }
